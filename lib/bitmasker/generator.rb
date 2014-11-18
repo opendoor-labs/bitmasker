@@ -1,6 +1,6 @@
 module Bitmasker
   class Generator
-    def initialize(mask_name, model, attribute_prefix='')
+    def initialize(mask_name, model, attribute_prefix = "")
       @bitmask_attributes = {}
       @bitmask_defaults = {}
 
@@ -36,7 +36,13 @@ module Bitmasker
     end
 
     def generate
-      klass = BitmaskAttributes.make(@model, @field_name, @bitmask_attributes, @attribute_prefix, @bitmask_defaults)
+      klass = BitmaskAttributes.make(
+        @model,
+        @field_name,
+        @bitmask_attributes,
+        @attribute_prefix,
+        @bitmask_defaults
+      )
       scope_klass = BitmaskScope.make(@model, @field_name, @mask_name, @bitmask_attributes)
 
       @model.send :define_method, @mask_name do

@@ -11,11 +11,9 @@ class Bitmasker::BitmaskScopeTest < MiniTest::Unit::TestCase
   def setup
     @klass = Bitmasker::BitmaskScope.make(
       MockModel, 'email_mask', 'emails',
-      {
-        send_weekly_email:        0b0001,
-        send_monthly_newsletter:  0b0010,
-        send_daily_spam:          0b0100,
-      }
+      send_weekly_email:        0b0001,
+      send_monthly_newsletter:  0b0010,
+      send_daily_spam:          0b0100,
     )
   end
 

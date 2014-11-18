@@ -7,7 +7,7 @@ class Bitmasker::BitmaskAttributesTest < MiniTest::Unit::TestCase
       !!value
     end
 
-    def initialize(*args)
+    def initialize(*)
       @attrs = {}
       @old_attrs = {}
     end
@@ -90,12 +90,12 @@ class Bitmasker::BitmaskAttributesTest < MiniTest::Unit::TestCase
 
   def test_prefix_accessors
     @klass = Bitmasker::BitmaskAttributes.make(
-      LiveModel, 'role_mask',
+      LiveModel, "role_mask",
       {
         manager: 0b0001,
         admin: 0b0010,
       },
-      'has_role_'
+      "has_role_"
     )
 
     subject = @klass.new(LiveModel.new)
@@ -119,4 +119,3 @@ class Bitmasker::BitmaskAttributesTest < MiniTest::Unit::TestCase
     assert_equal false, subject.has_role_admin_was
   end
 end
-

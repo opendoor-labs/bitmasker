@@ -99,10 +99,10 @@ class BitmaskAttributesTest < MiniTest::Unit::TestCase
 
   def test_array_assignment
     mock = IntegrationModel.new
-    mock.dummy = ['does_stuff']
+    mock.dummy = ["does_stuff"]
     assert mock.does_stuff
     assert !mock.with_default
-    mock.dummy = ['does_stuff', 'with_default'] # should accept strings
+    mock.dummy = ["does_stuff", "with_default"] # should accept strings
     assert mock.does_stuff
     assert mock.with_default
   end
@@ -119,7 +119,7 @@ class BitmaskAttributesTest < MiniTest::Unit::TestCase
 
   def test_empty_array_assignment
     mock = IntegrationModel.new
-    mock.dummy = ['does_stuff']
+    mock.dummy = ["does_stuff"]
     assert mock.does_stuff
     mock.dummy = []
     assert !mock.does_stuff
@@ -128,7 +128,7 @@ class BitmaskAttributesTest < MiniTest::Unit::TestCase
 
   def test_array_assignment_with_empty_strings
     mock = IntegrationModel.new
-    mock.dummy = ['', 'does_stuff']
+    mock.dummy = ["", "does_stuff"]
     assert mock.does_stuff
     assert !mock.with_default
   end
