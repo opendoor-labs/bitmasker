@@ -10,10 +10,15 @@ module Bitmasker
     class_attribute :model_class
     class_attribute :field_name
 
-
-    def self.make(model_class, field_name, bitmask_attributes, defaults = {})
+    def self.make(model_class, field_name, bitmask_attributes, attribute_prefix='', defaults = {})
       klass = Class.new(self) do
         define_attribute_methods bitmask_attributes.keys
+
+        if attribute_prefix.present?
+          bitmask_attributes.keys.each do |key|
+            alias_attribute "#{attribute_prefix}#{key}", key
+          end
+        end
       end
 
       klass.model_class = model_class
@@ -52,8 +57,17 @@ module Bitmasker
       Bitmask.new(bitmask_attributes, was).get attribute
     end
 
+    def from_array(array)
+      bitmask.set_array(Array(array).map(&:to_s).map(&:presence).compact)
+      write
+    end
+
     def to_a
       bitmask.to_a
+    end
+
+    def <<(attr)
+      send(:attribute=, attr.to_s, true)
     end
 
     # Methods for the model

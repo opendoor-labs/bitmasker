@@ -1,8 +1,8 @@
 module Bitmasker
   module Model
-    def has_bitmask_attributes(name)
+    def has_bitmask_attributes(name, attribute_prefix='')
       raise ArgumentError, "You must pass has_bitmask_attributes a block and define attributes." unless block_given?
-      config = Generator.new(name, self)
+      config = Generator.new(name, self, attribute_prefix)
       yield config
       config.generate
     end

@@ -1,12 +1,14 @@
 module Bitmasker
   class Generator
-    def initialize(mask_name, model)
+    def initialize(mask_name, model, attribute_prefix='')
       @bitmask_attributes = {}
       @bitmask_defaults = {}
 
       @model = model
       @mask_name = mask_name
       @field_name = mask_name.to_s + '_mask'
+
+      @attribute_prefix = attribute_prefix
 
       @scope_name = mask_name.to_s + '_scope'
 
@@ -34,11 +36,17 @@ module Bitmasker
     end
 
     def generate
-      klass = BitmaskAttributes.make(@model, @field_name, @bitmask_attributes, @bitmask_defaults)
+      klass = BitmaskAttributes.make(@model, @field_name, @bitmask_attributes, @attribute_prefix, @bitmask_defaults)
       scope_klass = BitmaskScope.make(@model, @field_name, @mask_name, @bitmask_attributes)
 
       @model.send :define_method, @mask_name do
         klass.new(self)
+      end
+
+      mask_name = @mask_name
+
+      @model.send :define_method, :"#{@mask_name}=" do |attrs|
+        send(mask_name).from_array(attrs)
       end
 
       @model.singleton_class.send :define_method, @scope_name do
@@ -50,10 +58,11 @@ module Bitmasker
         to: @scope_name
 
       @bitmask_attributes.each do |attribute, mask|
-        @model.delegate attribute, "#{attribute}?", "#{attribute}=", "#{attribute}_was",
+        meth = "#{@attribute_prefix}#{attribute}".to_sym
+        @model.delegate meth, :"#{meth}?", :"#{meth}=", :"#{meth}_was",
           to: @mask_name
 
-        @model.attr_accessible attribute if @use_attr_accessible
+        @model.attr_accessible meth if @use_attr_accessible
       end
     end
 
