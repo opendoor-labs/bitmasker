@@ -31,20 +31,26 @@ module Bitmasker
       Bitmask.new(bitmask_attributes, 0)
     end
 
+    def field_name_for_bit_query(field_name)
+      @field_name_for_bit_query ||= {}
+      @field_name_for_bit_query[field_name] ||=
+        model_class.connection.quote_table_name_for_assignment(model_class.table_name, field_name)
+    end
+
     # REVIEW: This (the unused _ attribute) tells me I have the design wrong
     def with_attribute(_, *attributes)
       # TODO: Test lots of databases
-      bitmask_query attributes, "#{field_name} & :mask = :mask"
+      bitmask_query attributes, "#{field_name_for_bit_query(field_name)} & :mask = :mask"
     end
 
     def with_any_attribute(_, *attributes)
       # TODO: Test lots of databases
-      bitmask_query attributes, "#{field_name} & :mask <> 0"
+      bitmask_query attributes, "#{field_name_for_bit_query(field_name)} & :mask <> 0"
     end
 
     def without_attribute(_, *attributes)
       # TODO: Test lots of databases
-      bitmask_query attributes, "#{field_name} & :mask = 0 OR #{field_name} IS NULL"
+      bitmask_query attributes, "#{field_name_for_bit_query(field_name)} & :mask = 0 OR #{field_name_for_bit_query(field_name)} IS NULL"
     end
 
     private
