@@ -50,6 +50,22 @@ module Bitmasker
       end
 
       mask_name = @mask_name
+      field_name = @field_name
+
+      @model.singleton_class.send :define_method, @field_name do |*names|
+        names = names.each_with_object({}) { |name, hsh| hsh[name.to_s] = true }
+        Bitmask.new(klass.bitmask_attributes, names)
+      end
+
+      @model.send :define_method, :"has_#{@mask_name}?" do |*names|
+        other = self.class.send(field_name, *names).to_i
+        (send(field_name).to_i & other.to_i) == other.to_i
+      end
+
+      @model.send :define_method, :"has_any_#{@mask_name}?" do |*names|
+        other = self.class.send(field_name, *names).to_i
+        (send(field_name).to_i & other.to_i) > 0
+      end
 
       @model.send :define_method, :"#{@mask_name}=" do |attrs|
         send(mask_name).from_array(attrs)

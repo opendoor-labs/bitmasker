@@ -43,22 +43,6 @@ module Bitmasker
       @bitmask = Bitmask.new(bitmask_attributes, read || defaults)
     end
 
-    def &(other)
-      @bitmask.data & other.bitmask.data
-    end
-
-    def |(other)
-      @bitmask.data | other.bitmask.data
-    end
-
-    def ^(other)
-      @bitmask.data ^ other.bitmask.data
-    end
-
-    def ~(other)
-      @bitmask.data ~ other.bitmask.data
-    end
-
     def attribute(attribute)
       bitmask.get attribute
     end

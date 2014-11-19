@@ -133,6 +133,17 @@ class BitmaskAttributesTest < MiniTest::Unit::TestCase
     assert !mock.with_default
   end
 
+  def test_has_methods
+    mock = IntegrationModel.new
+    mock.dummy = ["does_stuff"]
+    assert mock.has_dummy?("does_stuff")
+    assert !mock.has_dummy?("with_default")
+    assert mock.has_any_dummy?("does_stuff", "with_default")
+
+    bitmask = IntegrationModel.dummy_mask("does_stuff")
+    assert bitmask.to_i == mock.dummy.bitmask.to_i
+  end
+
   # not throwing exception because you can't run migrations when it does
   # def test_raises_without_field
   #   assert_raise ArgumentError do
