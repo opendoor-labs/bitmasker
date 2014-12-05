@@ -26,9 +26,9 @@ module Bitmasker
     # makes the config dsl more consistent
     alias_method :field_name, :field_name=
 
-    def attribute(name, mask, default = false)
+    def attribute(name, mask, default = nil)
       @bitmask_attributes[name] = mask
-      @bitmask_defaults[name] = default
+      @bitmask_defaults[name] = default unless default.nil?
     end
 
     def accessible
