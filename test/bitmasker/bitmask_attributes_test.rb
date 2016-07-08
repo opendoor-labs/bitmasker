@@ -2,6 +2,30 @@ require 'test_helper'
 
 class Bitmasker::BitmaskAttributesTest < MiniTest::Unit::TestCase
 
+  LiveModel = Class.new do
+    def self.value_to_boolean(value)
+      !!value
+    end
+
+    def initialize(*)
+      @attrs = {}
+      @old_attrs = {}
+    end
+
+    def [](attr)
+      @attrs.fetch(attr, 0)
+    end
+
+    def []=(name, value)
+      @old_attrs[name] = @attrs[name] unless @old_attrs.present?
+      @attrs[name] = value
+    end
+
+    def attribute_was(attr)
+      @old_attrs.fetch(attr, 0)
+    end
+  end
+
   MockModel = Class.new do
     def self.value_to_boolean(value)
       !!value
@@ -62,5 +86,36 @@ class Bitmasker::BitmaskAttributesTest < MiniTest::Unit::TestCase
   def test_to_a
     model_instance.expects(:[]).with('email_mask').returns(2)
     assert_equal ['send_monthly_newsletter'], subject.to_a
+  end
+
+  def test_prefix_accessors
+    @klass = Bitmasker::BitmaskAttributes.make(
+      LiveModel, "role_mask",
+      {
+        manager: 0b0001,
+        admin: 0b0010,
+      },
+      "has_role_"
+    )
+
+    subject = @klass.new(LiveModel.new)
+
+    assert_equal false, subject.has_role_manager
+    assert_equal false, subject.has_role_manager?
+
+    subject.has_role_manager = true
+
+    assert_equal true, subject.has_role_manager
+    assert_equal true, subject.has_role_manager?
+    assert_equal false, subject.has_role_manager_was
+
+    assert_equal false, subject.has_role_admin
+    assert_equal false, subject.has_role_admin?
+
+    subject.has_role_admin = true
+
+    assert_equal true, subject.has_role_admin
+    assert_equal true, subject.has_role_admin?
+    assert_equal false, subject.has_role_admin_was
   end
 end
